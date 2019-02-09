@@ -7,6 +7,7 @@ var pictures = [
 	'images/landscape-10.jpg',
 	'images/landscape-11.jpg',
 	'images/landscape-13.jpg',
+	'images/landscape-14.jpg',
 	'images/landscape-15.jpg',
 	'images/landscape-17.jpg',
 	'images/landscape-18.jpg',
@@ -19,12 +20,17 @@ var pictures = [
 	'images/pretty.jpg',
 ];
 
+var picturesStartRef = pictures;
+
 function initiateApp(){
 	/*advanced: add jquery sortable call here to make the gallery able to be sorted
 		//on change, rebuild the images array into the new order
 	*/
 	makeGallery(pictures);
 	addModalCloseHandler();
+
+	$("#gallery").sortable();
+		
 }
 function makeGallery(imageArray){
 	//use loops and jquery dom creation to make the html structure inside the #gallery section
@@ -36,11 +42,27 @@ function makeGallery(imageArray){
 
 		//append the element to the #gallery section
 
+		for (picturesIndex=0; picturesIndex<imageArray.length; picturesIndex++) {
+			
+			var idStr = "Image" +picturesIndex;
+			var imgUrlStr = "url(" +imageArray[picturesIndex] + ")";
+			var imgCaptionText = imageArray[picturesIndex].slice(7);
+			var imgCaption = $("<figcaption>").text(imgCaptionText);
+
+			var figure = $("<figure>").addClass("imageGallery col-xs-12 col-sm-6 col-md-4").attr("id", idStr).css({
+				"background-image": imgUrlStr
+			});
+			figure.append(imgCaption);
+
+			$("#gallery").append(figure);
+		}
 }
 
 function addModalCloseHandler(){
 	//add a click handler to the img element in the image modal.  When the element is clicked, close the modal
 	//for more info, check here: https://www.w3schools.com/bootstrap/bootstrap_ref_js_modal.asp	
+
+	
 }
 
 function displayImage(){
