@@ -20,18 +20,40 @@ var pictures = [
 	'images/pretty.jpg',
 ];
 
-var picturesStartRef = pictures;
-
 function initiateApp(){
 	/*advanced: add jquery sortable call here to make the gallery able to be sorted
 		//on change, rebuild the images array into the new order
 	*/
+
+	if(localStorage.images !== undefined){
+		pictures = JSON.parse(localStorage.images);
+	}
+
 	makeGallery(pictures);
 	addModalCloseHandler();
 
-	$("#gallery").sortable();
-		
+	$("#gallery").sortable({
+		update: function(){
+			var arrayNewOrder = [];
+			var newOrderImages = $(".imageGallery");
+
+			for(var imageIndex = 0; imageIndex<newOrderImages.length; imageIndex++){  
+				var backgroundImage = $(newOrderImages[imageIndex]).css("background-image");
+				var imagesInName = backgroundImage.indexOf("images");
+				var stringEnd = backgroundImage.lastIndexOf("g");
+
+				var backgroundImageName = backgroundImage.substring(imagesInName, (stringEnd+1));
+
+				arrayNewOrder.push(backgroundImageName);
+			}
+
+			localStorage.images = JSON.stringify(arrayNewOrder);
+		}
+	});
+
+
 }
+
 function makeGallery(imageArray){
 	//use loops and jquery dom creation to make the html structure inside the #gallery section
 
@@ -52,6 +74,7 @@ function makeGallery(imageArray){
 			var figure = $("<figure>").addClass("imageGallery col-xs-12 col-sm-6 col-md-4").attr("id", idStr).css({
 				"background-image": imgUrlStr
 			});
+			figure.click(displayImage);
 			figure.append(imgCaption);
 
 			$("#gallery").append(figure);
@@ -62,7 +85,9 @@ function addModalCloseHandler(){
 	//add a click handler to the img element in the image modal.  When the element is clicked, close the modal
 	//for more info, check here: https://www.w3schools.com/bootstrap/bootstrap_ref_js_modal.asp	
 
-	
+	$(".modal-body > img").click(function(){
+		$("#galleryModal").modal("hide");
+	});
 }
 
 function displayImage(){
@@ -77,10 +102,15 @@ function displayImage(){
 	//change the src of the image in the modal to the url of the image that was clicked on
 
 	//show the modal with JS.  Check for more info here: 
-	//https://www.w3schools.com/bootstrap/bootstrap_ref_js_modal.asp
+	//https://www.w3schools.com/bootstrap/bootstrap_ref_js_modal.asp 
+
+	var clickedImgId = $(this).attr("id");
+	var imgNumber = parseInt(clickedImgId.slice(5));
+	var imgName = pictures[imgNumber].slice(7);
+
+	$(".modal-title").text(imgName);
+	$(".modal-body > img").attr("src", pictures[imgNumber]);
+
+	$("#galleryModal").modal("show");
+
 }
-
-
-
-
-
